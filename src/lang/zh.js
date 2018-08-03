@@ -60,7 +60,9 @@ export default {
     exportZip: 'Export Zip',
     theme: '换肤',
     clipboardDemo: 'Clipboard',
-    i18n: '国际化'
+    i18n: '国际化',
+    system_config: '系统配置',
+    aca_list: '权限列表'
   },
   navbar: {
     logOut: '退出登录',

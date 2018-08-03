@@ -9,23 +9,21 @@ const service = axios.create({
   timeout: 5000 // request timeout
 })
 
-// request interceptor
 service.interceptors.request.use(config => {
-  // Do something before request is sent
   if (store.getters.token) {
-    // 让每个请求携带token-- ['X-Token']为自定义key 请根据实际情况自行修改
-    config.headers['X-Token'] = getToken()
+    config.headers['Authorization'] = 'Bearer ' + getToken()
   }
   return config
 }, error => {
-  // Do something with request error
-  console.log(error) // for debug
   Promise.reject(error)
 })
 
 // respone interceptor
 service.interceptors.response.use(
-  response => response,
+  response => {
+    console.log(response)
+    return response
+  },
   /**
    * 下面的注释为通过在response里，自定义code来标示请求状态
    * 当code返回如下情况则说明权限有问题，登出并返回到登录页
@@ -60,12 +58,32 @@ service.interceptors.response.use(
   //   }
   // },
   error => {
-    console.log('err' + error) // for debug
-    Message({
-      message: error.message,
-      type: 'error',
-      duration: 5 * 1000
-    })
+    if (error.response.status === 401) {
+      store.dispatch('FedLogOut').then(() => {
+        location.reload() // 为了重新实例化vue-router对象 避免bug
+      })
+    } else if (error.response.status === 422) {
+      let message = '表单验证失败:'
+      const errors = error.response.data.errors
+      for (const item in errors) {
+        for (const msg in errors[item]) {
+          message += '<br> - ' + errors[item][msg]
+        }
+      }
+      Message({
+        dangerouslyUseHTMLString: true,
+        message: message,
+        type: 'error',
+        duration: 3 * 1000
+      })
+    } else {
+      const data = error.response.data
+      Message({
+        message: data.message ? data.message : '系统繁忙, 请稍后重试 ~',
+        type: 'error',
+        duration: 3 * 1000
+      })
+    }
     return Promise.reject(error)
   })
 

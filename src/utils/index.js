@@ -269,3 +269,18 @@ export function deepClone(source) {
 export function uniqueArr(arr) {
   return Array.from(new Set(arr))
 }
+
+/**
+ * 递归查找子级的所有父级 id
+ * @param item
+ * @param list
+ * @returns {Array}
+ */
+export function searchParent(item, list = []) {
+  if (item.parent === undefined) {
+    list.reverse()
+    return list
+  }
+  list.push(item.parent.id)
+  return searchParent(item.parent, list)
+}
