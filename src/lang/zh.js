@@ -28,14 +28,6 @@ export default {
     lineChart: '折线图',
     mixChart: '混合图表',
     example: '综合实例',
-    nested: '路由嵌套',
-    menu1: '菜单1',
-    'menu1-1': '菜单1-1',
-    'menu1-2': '菜单1-2',
-    'menu1-2-1': '菜单1-2-1',
-    'menu1-2-2': '菜单1-2-2',
-    'menu1-3': '菜单1-3',
-    menu2: '菜单2',
     Table: 'Table',
     dynamicTable: '动态Table',
     dragTable: '拖拽Table',
@@ -52,17 +44,18 @@ export default {
     page401: '401',
     page404: '404',
     errorLog: '错误日志',
-    excel: 'Excel',
-    exportExcel: 'Export Excel',
-    selectExcel: 'Export Selected',
-    uploadExcel: 'Upload Excel',
     zip: 'Zip',
     exportZip: 'Export Zip',
     theme: '换肤',
     clipboardDemo: 'Clipboard',
     i18n: '国际化',
     system_config: '系统配置',
-    aca_list: '权限列表'
+    aca_list: '权限列表',
+    role_list: '角色列表',
+    user_list: '管理员列表'
+  },
+  main: {
+    system: '管理系统'
   },
   navbar: {
     logOut: '退出登录',

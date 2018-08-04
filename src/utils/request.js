@@ -21,8 +21,7 @@ service.interceptors.request.use(config => {
 // respone interceptor
 service.interceptors.response.use(
   response => {
-    console.log(response)
-    return response
+    return response.data
   },
   /**
    * 下面的注释为通过在response里，自定义code来标示请求状态

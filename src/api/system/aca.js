@@ -1,41 +1,40 @@
 import request from '@/utils/request'
 
 /**
- * 菜单列表
+ * 权限列表
  * @param params
  */
-export const menuList = (params) => request({
+export const acaList = (params) => request({
   url: 'system/aca',
   method: 'get',
   params: params
 })
 
 /**
- * 创建菜单
+ * 创建权限
  * @param data
  */
-export const createMenu = (data) => request({
+export const createAca = (data) => request({
   url: 'system/aca',
   method: 'post',
   data: data
 })
 
 /**
- * 更新菜单
+ * 更新权限
  * @param data
  */
-export const updateMenu = (data) => request({
-  url: 'system/aca',
+export const updateAca = (id, data) => request({
+  url: 'system/aca/' + id,
   method: 'put',
   data: data
 })
 
 /**
- * 删除菜单
+ * 删除权限
  * @param id
  */
-export const deleteMenu = (id) => request({
-  url: 'system/aca',
-  method: 'delete',
-  data: { id: id }
+export const deleteAca = (id) => request({
+  url: 'system/aca/' + id,
+  method: 'delete'
 })

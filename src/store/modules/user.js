@@ -1,4 +1,4 @@
-import { loginByUsername, logout, getUserInfo } from '@/api/login'
+import { loginByUsername, logout, getUserInfo } from '@/api/system/login'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 
 const user = {
@@ -49,9 +49,9 @@ const user = {
       const username = userInfo.username.trim()
       return new Promise((resolve, reject) => {
         loginByUsername(username, userInfo.password).then(response => {
-          const data = response.data
+          const data = response
           commit('SET_TOKEN', data.token)
-          setToken(response.data.token)
+          setToken(data.token)
           resolve()
         }).catch(error => {
           reject(error)
@@ -63,10 +63,7 @@ const user = {
     GetUserInfo({ commit, state }) {
       return new Promise((resolve, reject) => {
         getUserInfo(state.token).then(response => {
-          if (!response.data) { // 由于mockjs 不支持自定义状态码只能这样hack
-            reject('error')
-          }
-          const data = response.data
+          const data = response
 
           if (data.roles && data.roles.length > 0) { // 验证返回的roles是否是一个非空数组
             commit('SET_ROLES', data.roles)
@@ -127,7 +124,7 @@ const user = {
         commit('SET_TOKEN', role)
         setToken(role)
         getUserInfo(role).then(response => {
-          const data = response.data
+          const data = response
           commit('SET_ROLES', data.roles)
           commit('SET_NAME', data.name)
           commit('SET_AVATAR', data.avatar)

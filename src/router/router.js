@@ -15,28 +15,6 @@ export const constantRouterMap = [
       name: 'dashboard',
       meta: { title: 'dashboard', icon: 'dashboard', noCache: true }
     }]
-  },
-  {
-    path: '/documentation',
-    component: Layout,
-    redirect: '/documentation/index',
-    children: [{
-      path: 'index',
-      component: () => import('@/views/documentation/index'),
-      name: 'documentation',
-      meta: { title: 'documentation', icon: 'documentation', noCache: true }
-    }]
-  },
-  {
-    path: '/guide',
-    component: Layout,
-    redirect: '/guide/index',
-    children: [{
-      path: 'index',
-      component: () => import('@/views/guide/index'),
-      name: 'guide',
-      meta: { title: 'guide', icon: 'guide', noCache: true }
-    }]
   }
 ]
 
@@ -56,45 +34,6 @@ export const constantRouterMap = [
 **/
 
 export const asyncRouterMap = [
-  {
-    path: '/permission',
-    component: Layout,
-    redirect: '/permission/index',
-    alwaysShow: true, // will always show the root menu
-    meta: {
-      title: 'permission',
-      icon: 'lock',
-      roles: ['admin', 'editor'] // you can set roles in root nav
-    },
-    children: [{
-      path: 'page',
-      component: () => import('@/views/permission/page'),
-      name: 'pagePermission',
-      meta: {
-        title: 'pagePermission',
-        roles: ['admin'] // or you can only set roles in sub nav
-      }
-    }, {
-      path: 'directive',
-      component: () => import('@/views/permission/directive'),
-      name: 'directivePermission',
-      meta: {
-        title: 'directivePermission'
-        // if do not set roles, means: this page does not require permission
-      }
-    }]
-  },
-
-  {
-    path: '/icon',
-    component: Layout,
-    children: [{
-      path: 'index',
-      component: () => import('@/views/svg-icons/index'),
-      name: 'icons',
-      meta: { title: 'icons', icon: 'icon', noCache: true }
-    }]
-  },
 
   {
     path: '/components',
@@ -106,19 +45,24 @@ export const asyncRouterMap = [
       icon: 'component'
     },
     children: [
-      { path: 'tinymce', component: () => import('@/views/components-demo/tinymce'), name: 'tinymce-demo', meta: { title: 'tinymce' }},
-      { path: 'markdown', component: () => import('@/views/components-demo/markdown'), name: 'markdown-demo', meta: { title: 'markdown' }},
-      { path: 'json-editor', component: () => import('@/views/components-demo/jsonEditor'), name: 'jsonEditor-demo', meta: { title: 'jsonEditor' }},
-      { path: 'splitpane', component: () => import('@/views/components-demo/splitpane'), name: 'splitpane-demo', meta: { title: 'splitPane' }},
-      { path: 'avatar-upload', component: () => import('@/views/components-demo/avatarUpload'), name: 'avatarUpload-demo', meta: { title: 'avatarUpload' }},
-      { path: 'dropzone', component: () => import('@/views/components-demo/dropzone'), name: 'dropzone-demo', meta: { title: 'dropzone' }},
-      { path: 'sticky', component: () => import('@/views/components-demo/sticky'), name: 'sticky-demo', meta: { title: 'sticky' }},
-      { path: 'count-to', component: () => import('@/views/components-demo/countTo'), name: 'countTo-demo', meta: { title: 'countTo' }},
-      { path: 'mixin', component: () => import('@/views/components-demo/mixin'), name: 'componentMixin-demo', meta: { title: 'componentMixin' }},
-      { path: 'back-to-top', component: () => import('@/views/components-demo/backToTop'), name: 'backToTop-demo', meta: { title: 'backToTop' }},
-      { path: 'drag-dialog', component: () => import('@/views/components-demo/dragDialog'), name: 'dragDialog-demo', meta: { title: 'dragDialog' }},
-      { path: 'dnd-list', component: () => import('@/views/components-demo/dndList'), name: 'dndList-demo', meta: { title: 'dndList' }},
-      { path: 'drag-kanban', component: () => import('@/views/components-demo/dragKanban'), name: 'dragKanban-demo', meta: { title: 'dragKanban' }}
+      { path: 'icon-index', component: () => import('@/views/demos/svg-icons/index'), name: 'icons', meta: { title: 'icons', noCache: true }},
+      { path: 'tinymce', component: () => import('@/views/demos/components-demo/tinymce'), name: 'tinymce-demo', meta: { title: 'tinymce' }},
+      { path: 'markdown', component: () => import('@/views/demos/components-demo/markdown'), name: 'markdown-demo', meta: { title: 'markdown' }},
+      { path: 'json-editor', component: () => import('@/views/demos/components-demo/jsonEditor'), name: 'jsonEditor-demo', meta: { title: 'jsonEditor' }},
+      { path: 'splitpane', component: () => import('@/views/demos/components-demo/splitpane'), name: 'splitpane-demo', meta: { title: 'splitPane' }},
+      { path: 'avatar-upload', component: () => import('@/views/demos/components-demo/avatarUpload'), name: 'avatarUpload-demo', meta: { title: 'avatarUpload' }},
+      { path: 'dropzone', component: () => import('@/views/demos/components-demo/dropzone'), name: 'dropzone-demo', meta: { title: 'dropzone' }},
+      { path: 'sticky', component: () => import('@/views/demos/components-demo/sticky'), name: 'sticky-demo', meta: { title: 'sticky' }},
+      { path: 'count-to', component: () => import('@/views/demos/components-demo/countTo'), name: 'countTo-demo', meta: { title: 'countTo' }},
+      { path: 'mixin', component: () => import('@/views/demos/components-demo/mixin'), name: 'componentMixin-demo', meta: { title: 'componentMixin' }},
+      { path: 'back-to-top', component: () => import('@/views/demos/components-demo/backToTop'), name: 'backToTop-demo', meta: { title: 'backToTop' }},
+      { path: 'drag-dialog', component: () => import('@/views/demos/components-demo/dragDialog'), name: 'dragDialog-demo', meta: { title: 'dragDialog' }},
+      { path: 'dnd-list', component: () => import('@/views/demos/components-demo/dndList'), name: 'dndList-demo', meta: { title: 'dndList' }},
+      { path: 'drag-kanban', component: () => import('@/views/demos/components-demo/dragKanban'), name: 'dragKanban-demo', meta: { title: 'dragKanban' }},
+      { path: 'clipboard-index', component: () => import('@/views/demos/clipboard/index'), name: 'clipboardDemo', meta: { title: 'clipboardDemo' }},
+      { path: 'i18n-index', component: () => import('@/views/demos/i18n-demo/index'), name: 'i18n', meta: { title: 'i18n' }},
+      { path: 'theme-index', component: () => import('@/views/demos/theme/index'), name: 'theme', meta: { title: 'theme' }},
+      { path: 'zip-download', component: () => import('@/views/demos/zip/index'), name: 'exportZip', meta: { title: 'exportZip' }}
     ]
   },
 
@@ -185,89 +129,6 @@ export const asyncRouterMap = [
   },
 
   {
-    path: '/nested',
-    component: Layout,
-    redirect: '/nested/menu1/menu1-1',
-    name: 'nested',
-    meta: {
-      title: 'nested',
-      icon: 'nested'
-    },
-    children: [
-      {
-        path: 'menu1',
-        component: () => import('@/views/nested/menu1/index'), // Parent router-view
-        name: 'menu1',
-        meta: { title: 'menu1' },
-        redirect: '/nested/menu1/menu1-1',
-        children: [
-          {
-            path: 'menu1-1',
-            component: () => import('@/views/nested/menu1/menu1-1'),
-            name: 'menu1-1',
-            meta: { title: 'menu1-1' }
-          },
-          {
-            path: 'menu1-2',
-            component: () => import('@/views/nested/menu1/menu1-2'),
-            name: 'menu1-2',
-            redirect: '/nested/menu1/menu1-2/menu1-2-1',
-            meta: { title: 'menu1-2' },
-            children: [
-              {
-                path: 'menu1-2-1',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-1'),
-                name: 'menu1-2-1',
-                meta: { title: 'menu1-2-1' }
-              },
-              {
-                path: 'menu1-2-2',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-2'),
-                name: 'menu1-2-2',
-                meta: { title: 'menu1-2-2' }
-              }
-            ]
-          },
-          {
-            path: 'menu1-3',
-            component: () => import('@/views/nested/menu1/menu1-3'),
-            name: 'menu1-3',
-            meta: { title: 'menu1-3' }
-          }
-        ]
-      },
-      {
-        path: 'menu2',
-        name: 'menu2',
-        component: () => import('@/views/nested/menu2/index'),
-        meta: { title: 'menu2' }
-      }
-    ]
-  },
-
-  {
-    path: '/error',
-    component: Layout,
-    redirect: 'noredirect',
-    name: 'errorPages',
-    meta: {
-      title: 'errorPages',
-      icon: '404'
-    },
-    children: [
-      { path: '401', component: () => import('@/views/errorPage/401'), name: 'page401', meta: { title: 'page401', noCache: true }},
-      { path: '404', component: () => import('@/views/errorPage/404'), name: 'page404', meta: { title: 'page404', noCache: true }}
-    ]
-  },
-
-  {
-    path: '/error-log',
-    component: Layout,
-    redirect: 'noredirect',
-    children: [{ path: 'log', component: () => import('@/views/errorLog/index'), name: 'errorLog', meta: { title: 'errorLog', icon: 'bug' }}]
-  },
-
-  {
     path: '/system',
     component: Layout,
     redirect: '/system/aca',
@@ -277,39 +138,10 @@ export const asyncRouterMap = [
       icon: 'excel'
     },
     children: [
-      { path: 'aca', component: () => import('@/views/system/aca.vue'), name: 'system/aca', meta: { title: 'aca_list' }},
-      { path: 'export-selected-excel', component: () => import('@/views/excel/selectExcel'), name: 'selectExcel', meta: { title: 'selectExcel' }},
-      { path: 'upload-excel', component: () => import('@/views/excel/uploadExcel'), name: 'uploadExcel', meta: { title: 'uploadExcel' }}
+      { path: 'aca', component: () => import('@/views/system/aca'), name: 'system/aca', meta: { title: 'aca_list' }},
+      { path: 'role', component: () => import('@/views/system/role'), name: 'system/role', meta: { title: 'role_list' }},
+      { path: 'user', component: () => import('@/views/system/user'), name: 'system/user', meta: { title: 'user_list' }}
     ]
-  },
-
-  {
-    path: '/zip',
-    component: Layout,
-    redirect: '/zip/download',
-    alwaysShow: true,
-    meta: { title: 'zip', icon: 'zip' },
-    children: [{ path: 'download', component: () => import('@/views/zip/index'), name: 'exportZip', meta: { title: 'exportZip' }}]
-  },
-
-  {
-    path: '/theme',
-    component: Layout,
-    redirect: 'noredirect',
-    children: [{ path: 'index', component: () => import('@/views/theme/index'), name: 'theme', meta: { title: 'theme', icon: 'theme' }}]
-  },
-
-  {
-    path: '/clipboard',
-    component: Layout,
-    redirect: 'noredirect',
-    children: [{ path: 'index', component: () => import('@/views/clipboard/index'), name: 'clipboardDemo', meta: { title: 'clipboardDemo', icon: 'clipboard' }}]
-  },
-
-  {
-    path: '/i18n',
-    component: Layout,
-    children: [{ path: 'index', component: () => import('@/views/i18n-demo/index'), name: 'i18n', meta: { title: 'i18n', icon: 'international' }}]
   },
 
   { path: '*', redirect: '/404', hidden: true }

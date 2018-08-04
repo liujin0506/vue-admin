@@ -68,7 +68,7 @@
 <script>
 
 import treeTable from '@/components/TreeTable'
-import { menuList, createMenu, updateMenu, deleteMenu } from '@/api/system/aca'
+import { acaList, createAca, updateAca, deleteAca } from '@/api/system/aca'
 import { searchParent } from '@/utils'
 
 export default {
@@ -145,15 +145,14 @@ export default {
   methods: {
     async getList() {
       this.loading = true
-      const data = await menuList()
-      this.list = data.data
-      console.log(data.data)
+      const data = await acaList()
+      this.list = data
       this.loading = false
     },
     resetEditor() {
       this.editor = {
         id: null,
-        parentid: null,
+        parent_id: null,
         name: '',
         route_name: '',
         remark: '',
@@ -174,7 +173,7 @@ export default {
       this.editorStatus = 2
       this.editor = {
         id: item.id,
-        parentid: item.parentid,
+        parent_id: item.parent_id,
         name: item.name,
         route_name: item.route_name,
         public_aca: item.public_aca,
@@ -193,7 +192,7 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          deleteMenu(id).then(() => {
+          deleteAca(id).then(() => {
             this.$message({
               type: 'success',
               message: '删除成功!'
@@ -208,7 +207,7 @@ export default {
         if (valid) {
           this.editorLoading = true
           this.generateData()
-          createMenu(this.editor)
+          createAca(this.editor)
             .then(data => {
               this.editorLoading = false
               this.editorVisible = false
@@ -229,7 +228,7 @@ export default {
         if (valid) {
           this.editorLoading = true
           this.generateData()
-          updateMenu(this.editor)
+          updateAca(this.editor.id, this.editor)
             .then(data => {
               this.editorLoading = false
               this.editorVisible = false
@@ -248,7 +247,7 @@ export default {
     generateData() {
       const parentNameList = this.searchParentName(0, this.list)
       const parentName = parentNameList.join(',')
-      this.editor.parentid =
+      this.editor.parent_id =
                 this.menuParent.length === 0
                   ? null
                   : this.menuParent[this.menuParent.length - 1]

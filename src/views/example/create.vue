@@ -1,5 +1,7 @@
 <template>
-  <article-detail :is-edit='false'></article-detail>
+  <div class="app-container">
+    <article-detail :is-edit='false'></article-detail>
+  </div>
 </template>
 
 <script>

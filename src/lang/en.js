@@ -28,14 +28,6 @@ export default {
     lineChart: 'Line Chart',
     mixChart: 'Mix Chart',
     example: 'Example',
-    nested: 'Nested Routes',
-    menu1: 'Menu 1',
-    'menu1-1': 'Menu 1-1',
-    'menu1-2': 'Menu 1-2',
-    'menu1-2-1': 'Menu 1-2-1',
-    'menu1-2-2': 'Menu 1-2-2',
-    'menu1-3': 'Menu 1-3',
-    menu2: 'Menu 2',
     Table: 'Table',
     dynamicTable: 'Dynamic Table',
     dragTable: 'Drag Table',
@@ -61,6 +53,9 @@ export default {
     theme: 'Theme',
     clipboardDemo: 'Clipboard',
     i18n: 'I18n'
+  },
+  main: {
+    system: 'VueAdmin'
   },
   navbar: {
     logOut: 'Log Out',
