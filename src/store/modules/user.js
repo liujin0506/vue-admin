@@ -59,6 +59,15 @@ const user = {
       })
     },
 
+    // 用户刷新 token 成功，使用新的 token 替换掉本地的token
+    refreshToken({ commit }, token) {
+      return new Promise(resolve => {
+        commit('SET_TOKEN', token)
+        setToken(token)
+        resolve()
+      })
+    },
+
     // 获取用户信息
     GetUserInfo({ commit, state }) {
       return new Promise((resolve, reject) => {

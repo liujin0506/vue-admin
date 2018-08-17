@@ -21,6 +21,11 @@ service.interceptors.request.use(config => {
 // respone interceptor
 service.interceptors.response.use(
   response => {
+    var token = response.headers.authorization
+    if (token) {
+      // 如果 header 中存在 token，那么触发 refreshToken 方法，替换本地的 token
+      store.dispatch('refreshToken', token)
+    }
     return response.data
   },
   /**
@@ -58,9 +63,9 @@ service.interceptors.response.use(
   // },
   error => {
     if (error.response.status === 401) {
-      store.dispatch('FedLogOut').then(() => {
-        location.reload() // 为了重新实例化vue-router对象 避免bug
-      })
+      // store.dispatch('FedLogOut').then(() => {
+      //   location.reload() // 为了重新实例化vue-router对象 避免bug
+      // })
     } else if (error.response.status === 422) {
       let message = '表单验证失败:'
       const errors = error.response.data.errors
