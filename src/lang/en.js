@@ -127,7 +127,7 @@ export default {
   },
   excel: {
     export: 'Export',
-    selectedExport: 'Export selected items',
+    selectedExport: 'Export Selected Items',
     placeholder: 'Please enter the file name(default excel-list)'
   },
   zip: {
@@ -135,7 +135,7 @@ export default {
     placeholder: 'Please enter the file name(default file)'
   },
   theme: {
-    change: 'Theme change',
+    change: 'Change Theme',
     documentation: 'Theme documentation',
     tips: 'Tips: It is different from the theme-pick on the navbar is two different skinning methods, each with different application scenarios. Refer to the documentation for details.'
   },

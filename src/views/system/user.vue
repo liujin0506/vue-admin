@@ -2,142 +2,140 @@
 </style>
 
 <template>
-    <div class="user">
-        <div class="operate-container">
-            <el-button @click="handleCreate" class="operate-item" type="primary" icon="el-icon-edit">新增</el-button>
-        </div>
-
-        <div class="search-container">
-            <el-form ref="filters" :model="filters" label-width="150px">
-                <el-row>
-                    <el-col :span="8">
-                        <el-form-item label="用户名/姓名" prop="name">
-                            <el-input placeholder="请输入内容" v-model.trim="filters.name" clearable></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="6" v-if="0">
-                        <el-form-item label="状态" prop="status">
-                            <el-select v-model="filters.status" clearable placeholder="请选择">
-                                <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
-                                </el-option>
-                            </el-select>
-                        </el-form-item>
-                    </el-col>
-                </el-row>
-                <el-row>
-                    <el-col :span="24">
-                        <el-form-item>
-                            <el-button size="small" type="primary" icon="el-icon-search" @click="getList">查询</el-button>
-                            <el-button size="small" icon="el-icon-refresh" @click="resetFilters">重置</el-button>
-                        </el-form-item>
-                    </el-col>
-                </el-row>
-            </el-form>
-        </div>
-        <div class="table-container">
-            <el-card class="box-card">
-                <el-table :data="list" v-loading="loading" border style="width: 100%">
-                    <el-table-column prop="id" label="ID" width="70">
-                    </el-table-column>
-                    <el-table-column prop="username" label="用户名">
-                    </el-table-column>
-                    <el-table-column prop="nickname" label="姓名">
-                    </el-table-column>
-                    <el-table-column label="角色">
-                        <template slot-scope="scope">
-                            {{ scope.row.roles | role_name }}
-                        </template>
-                    </el-table-column>
-                    <el-table-column prop="mobile" label="手机号">
-                    </el-table-column>
-                    <el-table-column prop="lastlogin_time" label="最近登录">
-                    </el-table-column>
-                    <el-table-column label="状态" width="100">
-                        <template slot-scope="scope">
-                            <el-tag :type="scope.row.state === 'enable' ? 'primary' : 'danger'">{{scope.row.state | state}}
-                            </el-tag>
-                        </template>
-                    </el-table-column>
-                    <el-table-column label="操作" width="300">
-                        <template slot-scope="scope">
-                            <el-button type="primary" size="mini" @click="handleUpdate(scope.row)">编辑</el-button>
-                            <el-button type="success" size="mini" @click="handleRole(scope.row.id)">角色</el-button>
-                            <el-button type="warning" size="mini" @click="handlePass(scope.row.id)">密码</el-button>
-                            <el-button type="danger" size="mini" @click="handleDelete(scope.row.id)">删除</el-button>
-                        </template>
-                    </el-table-column>
-                </el-table>
-
-                <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="filters.page" :page-sizes="[20, 30, 50, 1000]" :page-size="filters.per_page" layout="total, sizes, prev, pager, next, jumper" :total="total">
-                </el-pagination>
-            </el-card>
-        </div>
-
-        <div class="editor-container">
-            <el-dialog :title="editorStatus == 1 ? '新增' : '编辑'" :visible.sync="editorVisible">
-                <el-form :model="editor" :rules="editorRules" ref="editor" label-width="120px">
-                    <el-form-item label="用户名" prop="username">
-                        <el-input placeholder="请输入内容" v-model.trim="editor.username" clearable></el-input>
-                    </el-form-item>
-
-                    <template v-if="editorStatus == 1">
-                        <el-form-item label="密码" prop="pass">
-                            <el-input type="password" v-model.trim="editor.pass" placeholder="请输入内容" auto-complete="off" clearable></el-input>
-                        </el-form-item>
-                        <el-form-item label="确认密码" prop="check_pass">
-                            <el-input type="password" v-model.trim="editor.check_pass" placeholder="请输入内容" auto-complete="off" clearable></el-input>
-                        </el-form-item>
-                    </template>
-
-                    <el-form-item label="姓名" prop="real_name">
-                        <el-input placeholder="请输入内容" v-model.trim="editor.real_name" clearable></el-input>
-                    </el-form-item>
-                    <el-form-item label="手机号码" prop="phone">
-                        <el-input placeholder="请输入内容" v-model.trim="editor.phone" clearable></el-input>
-                    </el-form-item>
-                    <el-form-item label="电子邮箱" prop="email">
-                        <el-input placeholder="请输入内容" v-model.trim="editor.email" clearable></el-input>
-                    </el-form-item>
-
-                    <el-form-item label="头像">
-                        <pan-thumb v-show="editor.avatar" :image="editor.avatar"></pan-thumb>
-                    </el-form-item>
-                </el-form>
-                <span slot="footer" class="dialog-footer">
-                    <el-button @click="editorVisible = false">取消</el-button>
-                    <el-button type="primary" :loading="editorLoading" @click="createData" v-if="editorStatus==1">提交</el-button>
-                    <el-button type="primary" :loading="editorLoading" @click="updateData" v-else>提交</el-button>
-                </span>
-            </el-dialog>
-
-            <el-dialog title="修改密码" :visible.sync="passVisible">
-                <el-form :model="editor" :rules="editorRules" ref="pass" label-width="120px">
-                    <el-form-item label="密码" prop="pass">
-                        <el-input type="password" v-model.trim="editor.pass" placeholder="请输入内容" auto-complete="off" clearable></el-input>
-                    </el-form-item>
-                    <el-form-item label="确认密码" prop="check_pass">
-                        <el-input type="password" v-model.trim="editor.check_pass" placeholder="请输入内容" auto-complete="off" clearable></el-input>
-                    </el-form-item>
-                </el-form>
-                <span slot="footer" class="dialog-footer">
-                    <el-button @click="passVisible = false">取消</el-button>
-                    <el-button type="primary" :loading="passLoading" @click="changePass">提交</el-button>
-                </span>
-            </el-dialog>
-
-            <el-dialog width="540px" title="角色" :visible.sync="roleVisible">
-                <el-transfer filterable filter-placeholder="请输入角色名称" :props="{
-                key: 'id',
-                label: 'name'
-              }" :titles="['未包含角色', '已包含角色']" v-model="selectRole" :data="roleList">
-                </el-transfer>
-                <span slot="footer" class="dialog-footer">
-                    <el-button @click="roleVisible = false">取消</el-button>
-                    <el-button type="primary" :loading="roleLoading" @click="changeRole">提交</el-button>
-                </span>
-            </el-dialog>
-        </div>
+  <div class="user">
+    <div class="operate-container">
+      <el-button class="operate-item" type="primary" icon="el-icon-edit" @click="handleCreate">新增</el-button>
     </div>
+
+    <div class="search-container">
+      <el-form ref="filters" :model="filters" label-width="150px">
+        <el-row>
+          <el-col :span="8">
+            <el-form-item label="用户名/姓名" prop="name">
+              <el-input v-model.trim="filters.name" placeholder="请输入内容" clearable/>
+            </el-form-item>
+          </el-col>
+          <el-col v-if="0" :span="6">
+            <el-form-item label="状态" prop="status">
+              <el-select v-model="filters.status" clearable placeholder="请选择">
+                <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"/>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="24">
+            <el-form-item>
+              <el-button size="small" type="primary" icon="el-icon-search" @click="getList">查询</el-button>
+              <el-button size="small" icon="el-icon-refresh" @click="resetFilters">重置</el-button>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+    </div>
+    <div class="table-container">
+      <el-card class="box-card">
+        <el-table v-loading="loading" :data="list" border style="width: 100%">
+          <el-table-column prop="id" label="ID" width="70"/>
+          <el-table-column prop="username" label="用户名"/>
+          <el-table-column prop="nickname" label="姓名"/>
+          <el-table-column label="角色">
+            <template slot-scope="scope">
+              {{ scope.row.roles | role_name }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="mobile" label="手机号"/>
+          <el-table-column prop="lastlogin_time" label="最近登录"/>
+          <el-table-column label="状态" width="100">
+            <template slot-scope="scope">
+              <el-tag :type="scope.row.state === 'enable' ? 'primary' : 'danger'">{{ scope.row.state | state }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="300">
+            <template slot-scope="scope">
+              <el-button type="primary" size="mini" @click="handleUpdate(scope.row)">编辑</el-button>
+              <el-button type="success" size="mini" @click="handleRole(scope.row.id)">角色</el-button>
+              <el-button type="warning" size="mini" @click="handlePass(scope.row.id)">密码</el-button>
+              <el-button type="danger" size="mini" @click="handleDelete(scope.row.id)">删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+
+        <el-pagination :current-page.sync="filters.page" :page-sizes="[20, 30, 50, 1000]" :page-size="filters.per_page" :total="total" layout="total, sizes, prev, pager, next, jumper" @size-change="handleSizeChange" @current-change="handleCurrentChange"/>
+      </el-card>
+    </div>
+
+    <div class="editor-container">
+      <el-dialog :title="editorStatus == 1 ? '新增' : '编辑'" :visible.sync="editorVisible">
+        <el-form ref="editor" :model="editor" :rules="editorRules" label-width="120px">
+          <el-form-item label="用户名" prop="username">
+            <el-input v-model.trim="editor.username" placeholder="请输入内容" clearable/>
+          </el-form-item>
+
+          <template v-if="editorStatus == 1">
+            <el-form-item label="密码" prop="pass">
+              <el-input v-model.trim="editor.pass" type="password" placeholder="请输入内容" auto-complete="off" clearable/>
+            </el-form-item>
+            <el-form-item label="确认密码" prop="check_pass">
+              <el-input v-model.trim="editor.check_pass" type="password" placeholder="请输入内容" auto-complete="off" clearable/>
+            </el-form-item>
+          </template>
+
+          <el-form-item label="姓名" prop="real_name">
+            <el-input v-model.trim="editor.real_name" placeholder="请输入内容" clearable/>
+          </el-form-item>
+          <el-form-item label="手机号码" prop="phone">
+            <el-input v-model.trim="editor.phone" placeholder="请输入内容" clearable/>
+          </el-form-item>
+          <el-form-item label="电子邮箱" prop="email">
+            <el-input v-model.trim="editor.email" placeholder="请输入内容" clearable/>
+          </el-form-item>
+
+          <el-form-item label="头像">
+            <pan-thumb v-show="editor.avatar" :image="editor.avatar"/>
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="editorVisible = false">取消</el-button>
+          <el-button v-if="editorStatus==1" :loading="editorLoading" type="primary" @click="createData">提交</el-button>
+          <el-button v-else :loading="editorLoading" type="primary" @click="updateData">提交</el-button>
+        </span>
+      </el-dialog>
+
+      <el-dialog :visible.sync="passVisible" title="修改密码">
+        <el-form ref="pass" :model="editor" :rules="editorRules" label-width="120px">
+          <el-form-item label="密码" prop="pass">
+            <el-input v-model.trim="editor.pass" type="password" placeholder="请输入内容" auto-complete="off" clearable/>
+          </el-form-item>
+          <el-form-item label="确认密码" prop="check_pass">
+            <el-input v-model.trim="editor.check_pass" type="password" placeholder="请输入内容" auto-complete="off" clearable/>
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="passVisible = false">取消</el-button>
+          <el-button :loading="passLoading" type="primary" @click="changePass">提交</el-button>
+        </span>
+      </el-dialog>
+
+      <el-dialog :visible.sync="roleVisible" width="540px" title="角色">
+        <el-transfer
+          :props="{
+            key: 'id',
+            label: 'name'
+          }"
+          :titles="['未包含角色', '已包含角色']"
+          v-model="selectRole"
+          :data="roleList"
+          filterable
+          filter-placeholder="请输入角色名称"/>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="roleVisible = false">取消</el-button>
+          <el-button :loading="roleLoading" type="primary" @click="changeRole">提交</el-button>
+        </span>
+      </el-dialog>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -155,8 +153,22 @@ import { roleList } from '@/api/system/role'
 import PanThumb from '@/components/PanThumb'
 
 export default {
-  name: 'custom',
+  name: 'Custom',
   components: { PanThumb },
+  filters: {
+    state(state) {
+      return state === 'enable' ? '正常' : '禁用'
+    },
+    role_name(roles) {
+      const result = []
+      if (roles && roles.length > 0) {
+        roles.forEach(item => {
+          result.push(item.name)
+        })
+      }
+      return result.join('、')
+    }
+  },
   data() {
     const validatePass = (rule, value, callback) => {
       if (value === '') {
@@ -225,9 +237,7 @@ export default {
             trigger: 'blur'
           }
         ],
-        pass: [
-          { required: true, validator: validatePass, trigger: 'blur' }
-        ],
+        pass: [{ required: true, validator: validatePass, trigger: 'blur' }],
         check_pass: [
           {
             required: true,
@@ -270,20 +280,6 @@ export default {
   created() {
     this.getRoleList()
     this.getList()
-  },
-  filters: {
-    state(state) {
-      return state === 'enable' ? '正常' : '禁用'
-    },
-    role_name(roles) {
-      const result = []
-      if (roles && roles.length > 0) {
-        roles.forEach(item => {
-          result.push(item.name)
-        })
-      }
-      return result.join('、')
-    }
   },
   methods: {
     async getList() {

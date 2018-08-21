@@ -1,79 +1,82 @@
 <style lang="scss">
 .menus {
-    .table-container {
-        .el-table__expanded-cell {
-            padding: 0px 0px 0px 47px;
-        }
+  .table-container {
+    .el-table__expanded-cell {
+      padding: 0px 0px 0px 47px;
     }
+  }
 }
 </style>
 
 <template>
-    <div class="menus">
-        <div class="operate-container">
-            <el-button @click="handleCreate" class="operate-item" type="primary" icon="el-icon-edit">新增
-            </el-button>
-            <el-tag type="success">支持无限级</el-tag>
-            <el-tag type="danger">注意：只是为了方便权限控制，在后端提供了一份路由表，路由配置还是在前端实现</el-tag>
-        </div>
-
-        <div class="table-container">
-            <el-card class="box-card">
-                <tree-table :data="list" :columns="columns" :expandAll="false" v-loading="loading" border>
-                    <el-table-column label="操作" width="154">
-                        <template slot-scope="scope">
-                            <el-button type="primary" size="mini" @click="handleUpdate(scope.row)">编辑</el-button>
-                            <el-button type="danger" size="mini" @click="handleDelete(scope.row.id)">删除</el-button>
-                        </template>
-                    </el-table-column>
-                </tree-table>
-            </el-card>
-        </div>
-
-        <div class="editor-container">
-            <el-dialog :title="editorStatus == 1 ? '新增' : '编辑'" :visible.sync="editorVisible">
-                <el-form :model="editor" :rules="editorRules" ref="editor" label-width="120px">
-
-                    <el-form-item label="上级菜单">
-                        <el-cascader :options="list" :props="props" v-model="menuParent" clearable change-on-select style="width: 100%" placeholder="不选则为顶级菜单">
-                        </el-cascader>
-                    </el-form-item>
-
-                    <el-form-item label="权限名称" prop="name">
-                        <el-input placeholder="请输入内容" v-model.trim="editor.name" clearable></el-input>
-                    </el-form-item>
-                    <el-form-item label="权限别名" prop="route_name">
-                        <el-input placeholder="请输入内容" v-model.trim="editor.route_name" :disabled="this.editorStatus != 1" :clearable="this.editorStatus == 1"></el-input>
-                    </el-form-item>
-                    <el-form-item label="是否公共权限" prop="public_aca">
-                        <el-radio-group v-model="editor.public_aca">
-                            <el-radio :label="1">是</el-radio>
-                            <el-radio :label="0">否</el-radio>
-                        </el-radio-group>
-                    </el-form-item>
-                    <el-form-item label="备注" prop="remark">
-                        <el-input type="textarea" v-model="editor.remark" placeholder="备注"></el-input>
-                    </el-form-item>
-                </el-form>
-                <span slot="footer" class="dialog-footer">
-                    <el-button @click="editorVisible = false">取消</el-button>
-                    <el-button type="primary" :loading="editorLoading" @click="createData" v-if="editorStatus==1">提交</el-button>
-                    <el-button type="primary" :loading="editorLoading" @click="updateData" v-else>提交</el-button>
-                </span>
-            </el-dialog>
-        </div>
+  <div class="menus">
+    <div class="operate-container">
+      <el-button class="operate-item" type="primary" icon="el-icon-edit" @click="handleCreate">新增
+      </el-button>
+      <el-tag type="success">支持无限级</el-tag>
+      <el-tag type="danger">注意：只是为了方便权限控制，在后端提供了一份路由表，路由配置还是在前端实现</el-tag>
     </div>
+
+    <div class="table-container">
+      <el-card class="box-card">
+        <tree-table :data="list" :columns="columns" :loading="loading" :expand-all="false" border>
+          <el-table-column label="操作" width="154">
+            <template slot-scope="scope">
+              <el-button type="primary" size="mini" @click="handleUpdate(scope.row)">编辑</el-button>
+              <el-button type="danger" size="mini" @click="handleDelete(scope.row.id)">删除</el-button>
+            </template>
+          </el-table-column>
+        </tree-table>
+      </el-card>
+    </div>
+
+    <div class="editor-container">
+      <el-dialog :title="editorStatus == 1 ? '新增' : '编辑'" :visible.sync="editorVisible">
+        <el-form ref="editor" :model="editor" :rules="editorRules" label-width="120px">
+
+          <el-form-item label="上级菜单">
+            <el-cascader :options="list" :props="props" v-model="menuParent" clearable change-on-select style="width: 100%" placeholder="不选则为顶级菜单" />
+          </el-form-item>
+
+          <el-form-item label="权限名称" prop="name">
+            <el-input v-model.trim="editor.name" clearable placeholder="请输入内容" />
+          </el-form-item>
+          <el-form-item label="权限别名" prop="route_name">
+            <el-input v-model.trim="editor.route_name" :disabled="editorStatus != 1" :clearable="editorStatus == 1" placeholder="请输入内容" />
+          </el-form-item>
+          <el-form-item label="是否公共权限" prop="public_aca">
+            <el-radio-group v-model="editor.public_aca">
+              <el-radio :label="1">是</el-radio>
+              <el-radio :label="0">否</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="备注" prop="remark">
+            <el-input v-model="editor.remark" type="textarea" placeholder="备注" />
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="editorVisible = false">取消</el-button>
+          <el-button v-if="editorStatus==1" :loading="editorLoading" type="primary" @click="createData">提交</el-button>
+          <el-button v-else :loading="editorLoading" type="primary" @click="updateData">提交</el-button>
+        </span>
+      </el-dialog>
+    </div>
+  </div>
 </template>
 
 <script>
-
 import treeTable from '@/components/TreeTable'
 import { acaList, createAca, updateAca, deleteAca } from '@/api/system/aca'
 import { searchParent } from '@/utils'
 
 export default {
-  name: 'aca',
+  name: 'Aca',
   components: { treeTable },
+  filters: {
+    is_publicaca: function(value) {
+      return value === 1 ? '是' : '否'
+    }
+  },
   data() {
     return {
       loading: false,
@@ -91,7 +94,9 @@ export default {
       editorRules: {
         name: [
           {
-            required: true, message: '不能为空', trigger: 'blur'
+            required: true,
+            message: '不能为空',
+            trigger: 'blur'
           },
           {
             max: 20,
@@ -101,7 +106,9 @@ export default {
         ],
         route_name: [
           {
-            required: true, message: '不能为空', trigger: 'blur'
+            required: true,
+            message: '不能为空',
+            trigger: 'blur'
           },
           {
             max: 20,
@@ -248,9 +255,9 @@ export default {
       const parentNameList = this.searchParentName(0, this.list)
       const parentName = parentNameList.join(',')
       this.editor.parent_id =
-                this.menuParent.length === 0
-                  ? null
-                  : this.menuParent[this.menuParent.length - 1]
+        this.menuParent.length === 0
+          ? null
+          : this.menuParent[this.menuParent.length - 1]
       this.editor.parentname = parentName
     },
     searchParentName(i, list, nameList = []) {
@@ -263,21 +270,13 @@ export default {
         const item = list[j]
         if (item.id === id) {
           nameList.push(item.name)
-          if (
-            item.children !== undefined &&
-                        item.children.length > 0
-          ) {
+          if (item.children !== undefined && item.children.length > 0) {
             items = item.children
           }
           break
         }
       }
       return this.searchParentName(++i, items, nameList)
-    }
-  },
-  filters: {
-    is_publicaca: function(value) {
-      return value === 1 ? '是' : '否'
     }
   }
 }
