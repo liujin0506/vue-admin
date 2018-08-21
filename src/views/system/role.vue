@@ -29,7 +29,7 @@
 
     <div class="table-container">
       <el-card class="box-card">
-        <el-table :data="list" :loading="loading" border style="width: 100%">
+        <el-table v-loading="loading" :data="list" border style="width: 100%">
           <el-table-column prop="id" label="ID" width="50" />
           <el-table-column prop="name" label="角色名称" width="350" />
           <el-table-column prop="remark" label="备注" />
@@ -42,7 +42,7 @@
           </el-table-column>
         </el-table>
 
-        <el-pagination :current-page.sync="filters.page" :page-sizes="[20, 100, 500, 1000]" :page-size="filters.per_page" :total="total" layout="total, sizes, prev, pager, next, jumper" @size-change="handleSizeChange" @current-change="handleCurrentChange" />
+        <el-pagination :current-page.sync="filters.page" :page-sizes="[20, 30, 50, 100]" :page-size="filters.per_page" :total="total" layout="total, sizes, prev, pager, next, jumper" @size-change="handleSizeChange" @current-change="handleCurrentChange" />
       </el-card>
     </div>
 

@@ -62,7 +62,7 @@
           </el-table-column>
         </el-table>
 
-        <el-pagination :current-page.sync="filters.page" :page-sizes="[20, 30, 50, 1000]" :page-size="filters.per_page" :total="total" layout="total, sizes, prev, pager, next, jumper" @size-change="handleSizeChange" @current-change="handleCurrentChange"/>
+        <el-pagination :current-page.sync="filters.page" :page-sizes="[20, 30, 50, 100]" :page-size="filters.per_page" :total="total" layout="total, sizes, prev, pager, next, jumper" @size-change="handleSizeChange" @current-change="handleCurrentChange"/>
       </el-card>
     </div>
 

@@ -18,8 +18,8 @@
     </div>
 
     <div class="table-container">
-      <el-card class="box-card">
-        <tree-table :data="list" :columns="columns" :loading="loading" :expand-all="false" border>
+      <el-card v-loading="loading" class="box-card">
+        <tree-table :data="list" :columns="columns" :expand-all="false" border>
           <el-table-column label="操作" width="154">
             <template slot-scope="scope">
               <el-button type="primary" size="mini" @click="handleUpdate(scope.row)">编辑</el-button>
@@ -132,10 +132,6 @@ export default {
         {
           text: '公共权限',
           value: 'is_public_aca'
-        },
-        {
-          text: 'appid',
-          value: 'appid'
         },
         {
           text: '备注',

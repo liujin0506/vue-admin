@@ -14,8 +14,6 @@
       <div class="createPost-main-container">
         <el-row>
 
-          <Warning />
-
           <el-col :span="24">
             <el-form-item style="margin-bottom: 40px;" prop="title">
               <MDinput v-model="postForm.title" :maxlength="100" name="name" required>
@@ -81,9 +79,8 @@ import Multiselect from 'vue-multiselect'// 使用的一个多选框组件，ele
 import 'vue-multiselect/dist/vue-multiselect.min.css'// 多选框组件css
 import Sticky from '@/components/Sticky' // 粘性header组件
 import { validateURL } from '@/utils/validate'
-import { fetchArticle } from '@/api/article'
+import { fetchContent } from '@/api/cms/content'
 import { userSearch } from '@/api/remoteSearch'
-import Warning from './Warning'
 import { CommentDropdown, PlatformDropdown, SourceUrlDropdown } from './Dropdown'
 
 const defaultForm = {
@@ -101,8 +98,8 @@ const defaultForm = {
 }
 
 export default {
-  name: 'ArticleDetail',
-  components: { Tinymce, MDinput, Upload, Multiselect, Sticky, Warning, CommentDropdown, PlatformDropdown, SourceUrlDropdown },
+  name: 'ContentDetail',
+  components: { Tinymce, MDinput, Upload, Multiselect, Sticky, CommentDropdown, PlatformDropdown, SourceUrlDropdown },
   props: {
     isEdit: {
       type: Boolean,
@@ -163,8 +160,8 @@ export default {
   },
   methods: {
     fetchData(id) {
-      fetchArticle(id).then(response => {
-        this.postForm = response.data
+      fetchContent(id).then(data => {
+        this.postForm = data
         // Just for test
         this.postForm.title += `   Article Id:${this.postForm.id}`
         this.postForm.content_short += `   Article Id:${this.postForm.id}`
@@ -221,6 +218,7 @@ export default {
 <style rel="stylesheet/scss" lang="scss" scoped>
 @import "src/styles/mixin.scss";
 .createPost-container {
+  background: #ffffff;
   position: relative;
   .createPost-main-container {
     padding: 40px 45px 20px 50px;

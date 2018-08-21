@@ -62,7 +62,10 @@ export const asyncRouterMap = [
       { path: 'clipboard-index', component: () => import('@/views/demos/clipboard/index'), name: 'clipboardDemo', meta: { title: 'clipboardDemo' }},
       { path: 'i18n-index', component: () => import('@/views/demos/i18n-demo/index'), name: 'i18n', meta: { title: 'i18n' }},
       { path: 'theme-index', component: () => import('@/views/demos/theme/index'), name: 'theme', meta: { title: 'theme' }},
-      { path: 'zip-download', component: () => import('@/views/demos/zip/index'), name: 'exportZip', meta: { title: 'exportZip' }}
+      { path: 'zip-download', component: () => import('@/views/demos/zip/index'), name: 'exportZip', meta: { title: 'exportZip' }},
+      { path: 'exportExcel', component: () => import('@/views/demos/excel/exportExcel'), name: 'exportExcel', meta: { title: 'exportExcel' }},
+      { path: 'selectExcel', component: () => import('@/views/demos/excel/selectExcel'), name: 'selectExcel', meta: { title: 'selectExcel' }},
+      { path: 'uploadExcel', component: () => import('@/views/demos/excel/uploadExcel'), name: 'uploadExcel', meta: { title: 'uploadExcel' }}
     ]
   },
 
@@ -94,37 +97,19 @@ export const asyncRouterMap = [
   },
 
   {
-    path: '/table',
+    path: '/cms',
     component: Layout,
-    redirect: '/table/complex-table',
-    name: 'table',
+    redirect: '/cms/content/list',
+    name: 'cms',
     meta: {
-      title: 'Table',
-      icon: 'table'
-    },
-    children: [
-      { path: 'dynamic-table', component: () => import('@/views/table/dynamicTable/index'), name: 'dynamicTable', meta: { title: 'dynamicTable' }},
-      { path: 'drag-table', component: () => import('@/views/table/dragTable'), name: 'dragTable', meta: { title: 'dragTable' }},
-      { path: 'inline-edit-table', component: () => import('@/views/table/inlineEditTable'), name: 'inlineEditTable', meta: { title: 'inlineEditTable' }},
-      { path: 'tree-table', component: () => import('@/views/table/treeTable/treeTable'), name: 'treeTableDemo', meta: { title: 'treeTable' }},
-      { path: 'custom-tree-table', component: () => import('@/views/table/treeTable/customTreeTable'), name: 'customTreeTableDemo', meta: { title: 'customTreeTable' }},
-      { path: 'complex-table', component: () => import('@/views/table/complexTable'), name: 'complexTable', meta: { title: 'complexTable' }}
-    ]
-  },
-
-  {
-    path: '/example',
-    component: Layout,
-    redirect: '/example/list',
-    name: 'example',
-    meta: {
-      title: 'example',
+      title: 'cms',
       icon: 'example'
     },
     children: [
-      { path: 'create', component: () => import('@/views/example/create'), name: 'createArticle', meta: { title: 'createArticle', icon: 'edit' }},
-      { path: 'edit/:id(\\d+)', component: () => import('@/views/example/edit'), name: 'editArticle', meta: { title: 'editArticle', noCache: true }, hidden: true },
-      { path: 'list', component: () => import('@/views/example/list'), name: 'articleList', meta: { title: 'articleList', icon: 'list' }}
+      { path: 'content/create', component: () => import('@/views/cms/content/create'), name: 'createContent', meta: { title: 'createContent', icon: '' }, hidden: true },
+      { path: 'content/edit/:id(\\d+)', component: () => import('@/views/cms/content/edit'), name: 'editContent', meta: { title: 'editContent', noCache: true }, hidden: true },
+      { path: 'content/list', component: () => import('@/views/cms/content/list'), name: 'contentList', meta: { title: 'contentList', icon: '' }},
+      { path: 'category/list', component: () => import('@/views/cms/content/list'), name: 'categoryList', meta: { title: 'categoryList', icon: '' }}
     ]
   },
 
