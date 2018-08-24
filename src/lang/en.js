@@ -52,7 +52,8 @@ export default {
     exportZip: 'Export Zip',
     theme: 'Theme',
     clipboardDemo: 'Clipboard',
-    i18n: 'I18n'
+    i18n: 'I18n',
+    externalLink: 'External Link'
   },
   main: {
     system: 'VueAdmin'
