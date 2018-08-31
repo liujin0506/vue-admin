@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function fetchList(query) {
   return request({
-    url: '/transaction/list',
+    url: '/cms/content',
     method: 'get',
     params: query
   })

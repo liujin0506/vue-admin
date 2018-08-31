@@ -1,5 +1,6 @@
 module.exports = {
   NODE_ENV: '"development"',
   ENV_CONFIG: '"dev"',
-  BASE_API: '"http://laravel.risay.cn/"'
+  I18N: false,
+  BASE_API: '"http://admin.jd.risay.cn/"'
 }
