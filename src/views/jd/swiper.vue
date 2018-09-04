@@ -32,7 +32,8 @@
         <el-table v-loading="loading" :data="list" border style="width: 100%">
           <el-table-column prop="id" label="ID" width="50" />
           <el-table-column prop="title" label="幻灯片名称" width="350" />
-          <el-table-column prop="remark" label="备注" />
+          <el-table-column prop="link" label="链接" />
+          <el-table-column prop="status" label="状态" />
           <el-table-column label="操作" width="220">
             <template slot-scope="scope">
               <el-button type="primary" size="mini" @click="handleUpdate(scope.row)">编辑</el-button>
@@ -60,6 +61,7 @@
               :on-success="handleAvatarSuccess"
               :before-upload="beforeAvatarUpload"
               :action="uploadUrl"
+              :headers="headers"
               class="avatar-uploader"
               accept="image/*">
               <img v-if="imageUrl" :src="imageUrl" class="avatar">
@@ -88,14 +90,8 @@
 </template>
 
 <script>
-import {
-  updateRole,
-  deleteRole,
-  menuListByRole,
-  createMenuByRole
-} from '@/api/system/role'
-import { swiperList, createSwiper } from '@/api/jd/swiper'
-import { acaList } from '@/api/system/aca'
+import { swiperList, createSwiper, updateSwiper, deleteSwiper } from '@/api/jd/swiper'
+import { getToken } from '@/utils/auth'
 
 export default {
   name: 'JdSwiper',
@@ -103,6 +99,9 @@ export default {
   data() {
     return {
       uploadUrl: process.env.BASE_API + '/system/upload',
+      headers: {
+        'Authorization': 'Bearer ' + getToken()
+      },
       imageUrl: '',
       loading: false,
       total: 0,
@@ -152,7 +151,6 @@ export default {
   },
   created() {
     this.getList()
-    this.getMenuList()
   },
   methods: {
     async getList() {
@@ -161,10 +159,6 @@ export default {
       this.list = data.data
       this.total = data.total
       this.loading = false
-    },
-    async getMenuList() {
-      const data = await acaList()
-      this.menuList = data
     },
     resetFilters() {
       this.$refs['filters'].resetFields()
@@ -202,29 +196,10 @@ export default {
       this.editorVisible = true
       this.editorStatus = 2
       this.editor = Object.assign({}, item)
+      this.imageUrl = process.env.BASE_API + '/' + item.thumb
       this.$nextTick(() => {
         this.$refs['editor'].clearValidate()
       })
-    },
-    async handleMenu(id) {
-      this.menuVisible = true
-      this.editor.id = id
-      const data = await menuListByRole(id)
-      const defaultChecked = []
-      if (data.length !== 0) {
-        data.forEach(item => {
-          defaultChecked.push(item.aca_id)
-        })
-      }
-      this.$nextTick(() => {
-        this.$refs.tree.setCheckedKeys(defaultChecked)
-      })
-    },
-    async updateMenu() {
-      const data = this.$refs.tree.getCheckedKeys(true)
-      await createMenuByRole(this.editor.id, data)
-      this.menuVisible = false
-      this.$message({ type: 'success', message: '保存成功!' })
     },
     handleDelete(id) {
       this.$confirm('是否确定删除?', '提示', {
@@ -233,7 +208,7 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          deleteRole(id).then(() => {
+          deleteSwiper(id).then(() => {
             this.$message({
               type: 'success',
               message: '删除成功!'
@@ -267,7 +242,7 @@ export default {
       this.$refs['editor'].validate(valid => {
         if (valid) {
           this.editorLoading = true
-          updateRole(this.editor.id, this.editor)
+          updateSwiper(this.editor.id, this.editor)
             .then(data => {
               this.editorLoading = false
               this.editorVisible = false
@@ -298,29 +273,22 @@ export default {
 }
 </script>
 
-<style scoped>
-.el-upload {
-  border: 1px dashed #d9d9d9 !important;
-  border-radius: 6px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-}
-.el-upload:hover {
-  border-color: #409EFF;
-}
-.avatar-uploader-icon {
-  font-size: 28px;
-  color: #8c939d;
-  width: 178px;
-  height: 178px;
-  line-height: 178px;
-  text-align: center;
-}
-.avatar {
-  width: 178px;
-  height: 178px;
-  display: block;
+<style lang="scss" scoped>
+.avatar-uploader {
+  .avatar-uploader-icon {
+    border:dashed 1px #dcdcdc;
+    font-size: 28px;
+    color: #8c939d;
+    width: 360px;
+    height: 200px;
+    line-height: 200px;
+    text-align: center;
+  }
+  .avatar {
+    width: 360px;
+    height: 200px;
+    display: block;
+  }
 }
 </style>
 

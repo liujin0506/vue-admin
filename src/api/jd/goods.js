@@ -11,6 +11,16 @@ export const goodsList = (params) => request({
 })
 
 /**
+ * 添加商品
+ * @param data
+ */
+export const createGoods = (data) => request({
+  url: 'jd/goods',
+  method: 'post',
+  data: data
+})
+
+/**
  * 更新商品
  * @param data
  */

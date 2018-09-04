@@ -45,12 +45,12 @@ export const constantRouterMap = [
 **/
 
 import jdRouter from './modules/jd'
-import cmsRouter from './modules/cms'
+// import cmsRouter from './modules/cms'
 import systemRouter from './modules/system'
 
 export const asyncRouterMap = [
   jdRouter,
-  cmsRouter,
+  // cmsRouter,
   systemRouter,
 
   { path: '*', redirect: '/404', hidden: true }
