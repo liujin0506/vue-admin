@@ -5,6 +5,7 @@
   <div class="goods">
     <div class="operate-container">
       <el-button class="operate-item" type="primary" icon="el-icon-edit" @click="handleCreate">新增</el-button>
+      <el-button class="operate-item" type="danger" icon="el-icon-edit" @click="handleUpload">批量上传</el-button>
     </div>
     <div class="search-container">
       <el-form ref="filters" :model="filters" label-width="100px">
@@ -66,7 +67,7 @@
     </div>
 
     <div class="editor-container">
-      <el-dialog :title="editorStatus == 1 ? '新增' : '编辑'" :visible.sync="editorVisible">
+      <el-dialog :title="editorStatus == 1 ? '新增' : '编辑'" :visible.sync="editorVisible" width="80%">
         <el-form ref="editor" :model="editor" :rules="editorRules" label-width="120px">
           <el-form-item v-if="editorStatus == 2" label="商品名称" prop="goods_name">
             <el-input v-model.trim="editor.goods_name" placeholder="请输入内容" clearable disabled/>
@@ -76,13 +77,6 @@
           </el-form-item>
           <el-form-item label="排序" prop="sort">
             <el-input v-model.trim="editor.sort" placeholder="请输入序号，越大越靠前" />
-          </el-form-item>
-          <el-form-item label="是否推荐" prop="is_recommend">
-            <el-radio-group v-model="editor.is_recommend">
-              <el-radio :label="1">是</el-radio>
-              <el-radio :label="0">否</el-radio>
-            </el-radio-group>
-            <div>推荐后才会在首页显示哦~</div>
           </el-form-item>
           <el-form-item label="自定义文案" prop="slogan">
             <el-input v-model.trim="editor.slogan" :autosize="{ minRows: 6, maxRows: 10}" type="textarea" placeholder="请输入内容"/>
@@ -99,26 +93,32 @@
           <el-form-item label="商品图片">
             <el-upload
               :show-file-list="false"
-              :on-success="handleAdSuccess"
+              :on-success="handleSuccess"
               :action="uploadUrl"
               :headers="headers"
               class="avatar-uploader"
               accept="image/*">
-              <img v-if="adUrl" :src="adUrl" class="avatar">
+              <img v-if="thumb" :src="thumb" class="avatar">
               <i v-else class="el-icon-plus avatar-uploader-icon"/>
             </el-upload>
+            <div>图片尺寸 350px*350px</div>
           </el-form-item>
-          <el-form-item label="商品二维码图片">
-            <el-upload
-              :show-file-list="false"
-              :on-success="handleAdQrSuccess"
-              :action="uploadUrl"
-              :headers="headers"
-              class="avatar-uploader"
-              accept="image/*">
-              <img v-if="adQrUrl" :src="adQrUrl" class="avatar">
-              <i v-else class="el-icon-plus avatar-uploader-icon"/>
-            </el-upload>
+          <el-form-item label="是否推荐" prop="is_recommend">
+            <el-radio-group v-model="editor.is_recommend">
+              <el-radio :label="1">是</el-radio>
+              <el-radio :label="0">否</el-radio>
+            </el-radio-group>
+            <div>推荐后才会在首页显示哦~</div>
+          </el-form-item>
+          <el-form-item label="京选上架时间">
+            <el-date-picker
+              v-model="value5"
+              :picker-options="pickerOptions"
+              type="datetimerange"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              align="right"/>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -128,24 +128,42 @@
         </span>
       </el-dialog>
     </div>
+
+    <div class="editor-container">
+      <el-dialog :visible.sync="uploadVisible" title="批量添加" width="80%">
+        <div style="width:100%;text-align:center;padding:10px;">
+          <a :href="urlBase + '/upload.xlsx'">下载模板</a>
+        </div>
+        <upload-excel-component :on-success="handleExcelSuccess" :before-upload="beforeExcelUpload"/>
+        <el-table :data="tableData" border highlight-current-row style="width: 100%;margin-top:20px;">
+          <el-table-column v-for="item of tableHeader" :prop="item" :label="item" :key="item"/>
+        </el-table>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="uploadVisible = false">取消</el-button>
+          <el-button :loading="uploadLoading" type="primary" @click="uploadData">提交</el-button>
+        </span>
+      </el-dialog>
+    </div>
   </div>
 </template>
 
 <script>
-import { goodsList, updateGoods, createGoods } from '@/api/jd/goods'
+import { goodsList, updateGoods, createGoods, uploadGoods } from '@/api/jd/goods'
 import { getToken } from '@/utils/auth'
+import { parseTime } from '@/utils'
+import UploadExcelComponent from '@/components/UploadExcel/index.vue'
 
 export default {
   name: 'JdGoods',
-  components: {},
+  components: { UploadExcelComponent },
   data() {
     return {
+      urlBase: process.env.BASE_API,
       uploadUrl: process.env.BASE_API + '/system/upload',
       headers: {
         'Authorization': 'Bearer ' + getToken()
       },
-      adUrl: '',
-      adQrUrl: '',
+      thumb: '',
       loading: false,
       total: 0,
       filters: {
@@ -193,7 +211,39 @@ export default {
         label: 'name'
       },
       menuLoading: false,
-      menuList: []
+      menuList: [],
+      pickerOptions: {
+        shortcuts: [{
+          text: '未来一周',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date()
+            end.setTime(end.getTime() + 3600 * 1000 * 24 * 7)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: '未来一个月',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date()
+            end.setTime(end.getTime() + 3600 * 1000 * 24 * 30)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: '未来三个月',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date()
+            end.setTime(end.getTime() + 3600 * 1000 * 24 * 90)
+            picker.$emit('pick', [start, end])
+          }
+        }]
+      },
+      value5: '',
+      uploadVisible: false,
+      uploadLoading: false,
+      tableData: [],
+      tableHeader: []
     }
   },
   created() {
@@ -209,6 +259,7 @@ export default {
     },
     resetFilters() {
       this.$refs['filters'].resetFields()
+      this.value5 = ''
       this.getList()
     },
     handleSizeChange(val) {
@@ -229,8 +280,8 @@ export default {
         ad_qr: '',
         ad: ''
       }
-      this.adUrl = ''
-      this.adQrUrl = ''
+      this.thumb = ''
+      this.value5 = ''
     },
     handleRecommend(id, handle) {
       let message
@@ -263,6 +314,11 @@ export default {
         this.$refs['editor'].clearValidate()
       })
     },
+    handleUpload() {
+      this.tableHeader = []
+      this.tableData = []
+      this.uploadVisible = true
+    },
     handleUpdate(item) {
       this.editorVisible = true
       this.editorStatus = 2
@@ -272,19 +328,45 @@ export default {
         sort: item.sort,
         is_recommend: item.is_recommend,
         slogan: item.slogan,
-        ad: item.ad,
-        ad_qr: item.ad_qr
+        img_url: item.img_url
       }
-      this.adUrl = item.ad ? process.env.BASE_API + '/' + item.ad : ''
-      this.adQrUrl = item.ad_qr ? process.env.BASE_API + '/' + item.ad_qr : ''
+      if (item.recommend_start && item.recommend_end) {
+        this.value5 = [new Date(item.recommend_start), new Date(item.recommend_end)]
+      }
+      if (item.img_url.substr(0, 4) === 'http') {
+        this.thumb = item.img_url
+      } else {
+        this.thumb = item.img_url ? process.env.BASE_API + '/' + item.img_url : ''
+      }
       this.$nextTick(() => {
         this.$refs['editor'].clearValidate()
+      })
+    },
+    uploadData() {
+      if (!this.tableData) {
+        this.$message.error('请先上传正确的Excel文件')
+      }
+      this.uploadLoading = true
+      uploadGoods(this.tableData).then(() => {
+        this.uploadLoading = false
+        this.uploadVisible = false
+        this.$message({
+          type: 'success',
+          message: '保存成功!'
+        })
+        this.getList()
+      }).catch(() => {
+        this.uploadLoading = false
       })
     },
     updateData() {
       this.$refs['editor'].validate(valid => {
         if (valid) {
           this.editorLoading = true
+          if (this.value5) {
+            this.editor.recommend_start = parseTime(this.value5[0])
+            this.editor.recommend_end = parseTime(this.value5[1])
+          }
           updateGoods(this.editor.id, this.editor)
             .then(data => {
               this.editorLoading = false
@@ -305,6 +387,10 @@ export default {
       this.$refs['editor'].validate(valid => {
         if (valid) {
           this.editorLoading = true
+          if (this.value5) {
+            this.editor.recommend_start = parseTime(this.value5[0])
+            this.editor.recommend_end = parseTime(this.value5[1])
+          }
           createGoods(this.editor).then(data => {
             this.editorLoading = false
             this.editorVisible = false
@@ -322,13 +408,31 @@ export default {
     addText(text) {
       this.editor.slogan += text
     },
-    handleAdSuccess(res, file) {
-      this.adUrl = process.env.BASE_API + '/' + res.path
-      this.editor.ad = res.path
+    handleSuccess(res, file) {
+      this.thumb = process.env.BASE_API + '/' + res.path
+      this.editor.img_url = res.path
     },
-    handleAdQrSuccess(res, file) {
-      this.adQrUrl = process.env.BASE_API + '/' + res.path
-      this.editor.ad_qr = res.path
+    beforeExcelUpload(file) {
+      const isLt1M = file.size / 1024 / 1024 < 1
+
+      if (isLt1M) {
+        return true
+      }
+
+      this.$message({
+        message: '请上传小于1M的文件.',
+        type: 'warning'
+      })
+      return false
+    },
+    handleExcelSuccess({ results, header }) {
+      this.tableData = []
+      results.forEach((item) => {
+        if (item.skuId) {
+          this.tableData.push(item)
+        }
+      })
+      this.tableHeader = header
     }
   }
 }
@@ -345,14 +449,14 @@ export default {
     border:dashed 1px #dcdcdc;
     font-size: 28px;
     color: #8c939d;
-    width: 360px;
-    height: 200px;
-    line-height: 200px;
+    width: 70px;
+    height: 70px;
+    line-height: 70px;
     text-align: center;
   }
   .avatar {
-    width: 360px;
-    height: 200px;
+    width: 70px;
+    height: 70px;
     display: block;
   }
 }

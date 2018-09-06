@@ -67,6 +67,7 @@
               <img v-if="imageUrl" :src="imageUrl" class="avatar">
               <i v-else class="el-icon-plus avatar-uploader-icon"/>
             </el-upload>
+            <div>推荐尺寸：465px * 200px</div>
           </el-form-item>
           <el-form-item label="是否可用" prop="status">
             <el-radio-group v-model="editor.status">
