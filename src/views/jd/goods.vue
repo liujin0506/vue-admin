@@ -132,7 +132,7 @@
     <div class="editor-container">
       <el-dialog :visible.sync="uploadVisible" title="批量添加" width="80%">
         <div style="width:100%;text-align:center;padding:10px;">
-          <a :href="urlBase + '/upload.xlsx'">下载模板</a>
+          请严格按照模版上传商品，请勿修改表头 <a :href="urlBase + '/upload.xlsx'" style="color:red;">下载模板</a>
         </div>
         <upload-excel-component :on-success="handleExcelSuccess" :before-upload="beforeExcelUpload"/>
         <el-table :data="tableData" border highlight-current-row style="width: 100%;margin-top:20px;">
