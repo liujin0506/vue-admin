@@ -11,7 +11,7 @@
       <el-form ref="filters" :model="filters" label-width="100px">
         <el-row>
           <el-col :span="6">
-            <el-form-item label="幻灯片名称" prop="name">
+            <el-form-item label="Banner名称" prop="name">
               <el-input v-model.trim="filters.name" placeholder="请输入内容" clearable/>
             </el-form-item>
           </el-col>
@@ -31,7 +31,7 @@
       <el-card class="box-card">
         <el-table v-loading="loading" :data="list" border style="width: 100%">
           <el-table-column prop="id" label="ID" width="50" />
-          <el-table-column prop="title" label="幻灯片名称" width="350" />
+          <el-table-column prop="title" label="名称" width="350" />
           <el-table-column prop="link" label="链接" />
           <el-table-column prop="status" label="状态" />
           <el-table-column label="操作" width="220">
@@ -49,10 +49,10 @@
     <div class="editor-container">
       <el-dialog :title="editorStatus == 1 ? '新增' : '编辑'" :visible.sync="editorVisible">
         <el-form ref="editor" :model="editor" :rules="editorRules" label-width="120px">
-          <el-form-item label="幻灯片名称" prop="title">
+          <el-form-item label="Banner名称" prop="title">
             <el-input v-model.trim="editor.title" placeholder="请输入内容" clearable/>
           </el-form-item>
-          <el-form-item label="幻灯片排序" prop="sort">
+          <el-form-item label="排序" prop="sort">
             <el-input v-model.trim="editor.sort" placeholder="请输入内容" clearable/>
           </el-form-item>
           <el-form-item label="图片">
@@ -75,7 +75,7 @@
               <el-radio :label="0">否</el-radio>
             </el-radio-group>
           </el-form-item>
-          <el-form-item label="幻灯片链接" prop="link">
+          <el-form-item label="链接" prop="link">
             <el-input v-model.trim="editor.link" placeholder="请输入内容" clearable/>
           </el-form-item>
         </el-form>

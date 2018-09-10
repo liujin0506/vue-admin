@@ -32,10 +32,10 @@
       <el-dialog :title="editorStatus == 1 ? '新增' : '编辑'" :visible.sync="editorVisible">
         <el-form ref="editor" :model="editor" :rules="editorRules" label-width="120px">
 
-          <el-form-item label="栏目名称" prop="name">
+          <el-form-item label="分类名称" prop="name">
             <el-input v-model.trim="editor.name" clearable placeholder="请输入内容" disabled />
           </el-form-item>
-          <el-form-item label="栏目排序" prop="sort">
+          <el-form-item label="分类排序" prop="sort">
             <el-input v-model.trim="editor.sort" placeholder="请输入序号，越大越靠前" />
           </el-form-item>
           <el-form-item label="是否推荐" prop="is_recommend">
@@ -103,7 +103,7 @@ export default {
           width: 180
         },
         {
-          text: '栏目名称',
+          text: '分类名称',
           value: 'name'
         }
       ],

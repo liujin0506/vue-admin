@@ -21,11 +21,11 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="推荐状态" prop="is_recommend">
+            <el-form-item label="是否京选" prop="is_recommend">
               <el-select v-model="filters.is_recommend" clearable placeholder="请选择" @change="getList">
                 <el-option label="全部" value="-1"/>
-                <el-option label="未推荐" value="0"/>
-                <el-option label="已推荐" value="1"/>
+                <el-option label="否" value="0"/>
+                <el-option label="是" value="1"/>
               </el-select>
             </el-form-item>
           </el-col>
@@ -49,10 +49,10 @@
           <el-table-column prop="wl_unit_price" label="京东价格" width="100" />
           <el-table-column prop="discount" label="优惠金额" width="100" />
           <el-table-column prop="coupon_num" label="优惠券数量" width="100" />
-          <el-table-column label="推荐状态" width="100">
+          <el-table-column label="京选" width="100">
             <template slot-scope="scope">
               <el-button v-if="scope.row.is_recommend === 1" type="info" size="mini" @click="handleRecommend(scope.row.id, 0)">取消</el-button>
-              <el-button v-if="scope.row.is_recommend === 0" type="danger" size="mini" @click="handleRecommend(scope.row.id, 1)">推荐</el-button>
+              <el-button v-if="scope.row.is_recommend === 0" type="danger" size="mini" @click="handleRecommend(scope.row.id, 1)">京选</el-button>
             </template>
           </el-table-column>
           <el-table-column label="操作" width="100">
@@ -77,6 +77,12 @@
           </el-form-item>
           <el-form-item label="排序" prop="sort">
             <el-input v-model.trim="editor.sort" placeholder="请输入序号，越大越靠前" />
+          </el-form-item>
+          <el-form-item v-if="editorStatus == 1" label="优惠券链接" prop="coupon_link">
+            <el-input v-model.trim="editor.coupon_link" placeholder="优惠券链接" />
+          </el-form-item>
+          <el-form-item v-if="editorStatus == 1" label="券后价" prop="price">
+            <el-input v-model.trim="editor.price" placeholder="券后价" />
           </el-form-item>
           <el-form-item label="自定义文案" prop="slogan">
             <el-input v-model.trim="editor.slogan" :autosize="{ minRows: 6, maxRows: 10}" type="textarea" placeholder="请输入内容"/>
@@ -103,12 +109,12 @@
             </el-upload>
             <div>图片尺寸 350px*350px</div>
           </el-form-item>
-          <el-form-item label="是否推荐" prop="is_recommend">
+          <el-form-item label="是否京选" prop="is_recommend">
             <el-radio-group v-model="editor.is_recommend">
               <el-radio :label="1">是</el-radio>
               <el-radio :label="0">否</el-radio>
             </el-radio-group>
-            <div>推荐后才会在首页显示哦~</div>
+            <div>设置为京选后才会在首页显示哦~</div>
           </el-form-item>
           <el-form-item label="京选上架时间">
             <el-date-picker
@@ -135,13 +141,13 @@
           请严格按照模版上传商品，请勿修改表头 <a :href="urlBase + '/upload.xlsx'" style="color:red;">下载模板</a>
         </div>
         <upload-excel-component :on-success="handleExcelSuccess" :before-upload="beforeExcelUpload"/>
+        <div class="btns">
+          <el-button @click="uploadVisible = false">取消</el-button>
+          <el-button :loading="uploadLoading" type="primary" @click="uploadData">提交</el-button>
+        </div>
         <el-table :data="tableData" border highlight-current-row style="width: 100%;margin-top:20px;">
           <el-table-column v-for="item of tableHeader" :prop="item" :label="item" :key="item"/>
         </el-table>
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="uploadVisible = false">取消</el-button>
-          <el-button :loading="uploadLoading" type="primary" @click="uploadData">提交</el-button>
-        </span>
       </el-dialog>
     </div>
   </div>
@@ -180,7 +186,10 @@ export default {
         goods_name: null,
         sort: 0,
         is_recommend: 0,
-        slogan: ''
+        slogan: '',
+        img_url: '',
+        coupon_link: '',
+        price: ''
       },
       editorRules: {
         sku_id: [
@@ -200,6 +209,12 @@ export default {
           }
         ],
         sort: [
+          { required: true, message: '不能为空', trigger: 'blur' }
+        ],
+        coupon_link: [
+          { required: true, message: '不能为空', trigger: 'blur' }
+        ],
+        price: [
           { required: true, message: '不能为空', trigger: 'blur' }
         ]
       },
@@ -277,8 +292,9 @@ export default {
         sort: 0,
         is_recommend: 0,
         slogan: '',
-        ad_qr: '',
-        ad: ''
+        img_url: '',
+        coupon_link: '',
+        price: ''
       }
       this.thumb = ''
       this.value5 = ''
@@ -286,9 +302,9 @@ export default {
     handleRecommend(id, handle) {
       let message
       if (handle === 1) {
-        message = '是否确定推荐'
+        message = '是否确定设置为京选'
       } else {
-        message = '是否取消推荐'
+        message = '是否取消京选'
       }
       this.$confirm(message, '提示', {
         confirmButtonText: '确定',
@@ -328,7 +344,9 @@ export default {
         sort: item.sort,
         is_recommend: item.is_recommend,
         slogan: item.slogan,
-        img_url: item.img_url
+        img_url: item.img_url,
+        coupon_link: '',
+        price: ''
       }
       if (item.recommend_start && item.recommend_end) {
         this.value5 = [new Date(item.recommend_start), new Date(item.recommend_end)]
@@ -459,5 +477,9 @@ export default {
     height: 70px;
     display: block;
   }
+}
+.btns {
+  padding-top: 10px;
+  text-align: center;
 }
 </style>

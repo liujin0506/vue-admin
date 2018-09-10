@@ -3,7 +3,7 @@
     <div class="web_logo">
       <a href="/">
         <img :src="homeLogo" alt="">
-        <p>{{ $t('main.system') }}</p>
+        <p>京好赚管理系统</p>
       </a>
     </div>
     <el-menu
