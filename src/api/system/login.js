@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function loginByUsername(username, password) {
   const data = {
-    email: username,
+    username: username,
     password: password
   }
   return request({
